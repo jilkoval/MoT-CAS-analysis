@@ -2,24 +2,23 @@
 Ministry of Transport interview exercise, Senior Data Analyst role
 Lucie Jilkova, 12 April 2022
 
-Script run some basic anlysis and visualizations of CAS data by region. 
+This Script runs some basic analysis and visualisations of the CAS data by region. 
 Produces four png plots and an html file with a heatmap.
 
-The script assumes following files in the ./data/ directory:
-    ./data/Crash_Analysis_System_(CAS)_data.csv -- CAS csv data file as dowloaded from
+The script assumes the following files are in the dir_data (./data/) directory:
+    ./data/Crash_Analysis_System_(CAS)_data.csv -- CAS csv file as dowloaded from
         https://opendata-nzta.opendata.arcgis.com/datasets/crash-analysis-system-cas-data-1
-    ./data/cas_wellington_2019.geojson -- CAS geojson data file for Wellington 
+    ./data/cas_wellington_2019.geojson -- CAS geojson file for Wellington 
         region in 2019
     ./data/Census_Usually_resident_population_count_and_change_by_region_2006_2013_and_2018.csv --
-        -- csv data file with 2018 Census population count by region, downloaded from
+        -- csv data with 2018 Census population count by region, downloaded from
         https://figure.nz/table/HHa5hUtxrCJArkzA
 
 Tested with Python 3.9.7, Pandas 1.3.4, Seaborn 0.11.2, Matplotlib 3.4.3, 
 Numpy 1.20.3, Geojson 2.5.0, Folium 0.12.1
 """
 
-# import pandas as pd
-import func as fn # function library in a separate file
+import func as fn # functions library in a separate file
 
 def main():
     ### reading CAS data
@@ -28,7 +27,7 @@ def main():
     
     l_severity = ['Non-Injury', 'Minor', 'Serious', 'Fatal']
     
-    ### plot crashes by region in time
+    ### crashes by region in time
     file_crashes_by_region_in_time = 'plt_crashes_by_region_in_time.png'
     print(f'* Plotting crashes by region in time ({file_crashes_by_region_in_time})')
     
@@ -41,10 +40,10 @@ def main():
     fn.plt_lineplot_by_region(df_crashes_by_region, figsize=(10,5), 
                               file_out=file_crashes_by_region_in_time)
     
-    ### plot severity of crashes per capita by region in 2018
+    ### severity of crashes per capita by region in 2018
     file_severity_per_capita_by_region = 'plt_severity_per_capita_by_region.png'
-    print(f'* Plotting severity of crashes per capita by region in 2018\
-     ({file_severity_per_capita_by_region})')
+    print(f'* Plotting severity of crashes per capita by region in 2018 \
+    ({file_severity_per_capita_by_region})')
     
     f_2018 = df_cas['year'] == 2018
     df_severity_2018 = df_cas[f_2018][['region', 'severity']].value_counts()
@@ -60,10 +59,10 @@ def main():
     fn.plt_severity_per_capita(df_sev_pop_2018, figsize=(6,6), 
                                file_out=file_severity_per_capita_by_region)
     
-    ### plot severity distributions and open vs. urban road crashes by region
+    ### severity distributions and open vs. urban road crashes by region
     file_severity_and_open_by_region = 'plt_severity_and_open_by_region.png'
-    print(f'* Plotting severity distributions and open vs. urban road crashes by region\
-     ({file_severity_and_open_by_region})')
+    print(f'* Plotting severity distributions and open vs. urban road crashes by region \
+    ({file_severity_and_open_by_region})')
         
     # use data from years 2016--2020
     f_years = df_cas['year'].between(2016, 2020)
@@ -83,10 +82,10 @@ def main():
                               figsize=(10, 6), 
                               file_out=file_severity_and_open_by_region)
     
-    ### plot severity distributions for open vs. urban crashes
+    ### severity distributions for open vs. urban crashes
     f_severity_of_uo = 'plt_severity_of_uo.png'
-    print(f'* Plotting severity distributions for open vs. urban crashes\
-     ({f_severity_of_uo})')
+    print(f'* Plotting severity distributions for open vs. urban crashes \
+    ({f_severity_of_uo})')
     
     # use data from yers 2016--2020
     df_uo_severity = df_cas[f_years][['urban', 'severity']].value_counts()

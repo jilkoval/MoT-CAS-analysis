@@ -10,7 +10,7 @@ import folium
 from matplotlib import pyplot as plt
 from folium.plugins import HeatMap
 
-# set pytplot style for plotting, adopting seaborn-talk with dark grid style
+# set pyplot style for plotting, adopting seaborn-talk with dark grid style
 plt.style.use('default')
 plt.style.use('seaborn-darkgrid')
 plt.style.use('seaborn-talk')
@@ -100,14 +100,14 @@ def get_cas_with_used_columns(file='Crash_Analysis_System_(CAS)_data.csv',
     - Renames some columns for convenience.
     - Sets index to OBJECTID.
     - Removes strings ' Region' and ' Crash' from region and crashSeverity columns.
-    - Returns pandas DF with columns [severiy, year, region, urban].
+    - Returns pandas DF with columns [severity, year, region, urban].
     """
     df = pd.read_csv(dir_data+file, usecols=columns)
     
     df.rename(columns={'crashYear': 'year', 'crashSeverity': 'severity'}, inplace=True)
     df.set_index('OBJECTID', inplace=True)
     
-    # filter out crashes with no region (for a complete anlysis, missing values
+    # filter out crashes with no region (for a complete analysis, missing values
     #    should be figured out from other columns)
     f_no_region = df.region.isnull()
     print(f'! There are {f_no_region.sum():,} (out of {df.shape[0]:,}) crashes with a missing region value.\
@@ -165,7 +165,7 @@ def plt_lineplot_by_region(df, figsize=(10,5),
     
     # labels and legend
     plt.xlabel('year')
-    plt.ylabel('fatal and injury crashes count')
+    plt.ylabel('fatal and injury crash counts')
     plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
     
     plt.tight_layout(pad=0.2)
@@ -200,8 +200,7 @@ def plt_severity_per_capita(df, figsize=(6,6), file_out=None, title=None):
     for i, sev in enumerate(df.columns):
         df_i = pd.DataFrame(df_[sev])
         sns.heatmap(df_i, annot=True, fmt='.0f', ax=axes[i], cmap=cmap, cbar=False)
-        if i>0:
-            axes[i].set_ylabel(None)
+        axes[i].set_ylabel(None)
             
     if title is not None:
         axes[1].set_title('Crashes per 100,000 population by region in 2018', pad=20)
@@ -221,7 +220,7 @@ def plt_bar_dist_by_region(df, df_values=None, figsize=(10, 6), file_out=None):
         - df_values: DF or None, optional. 
             Contains the absolute numbers of crashes by severity for regions.
             Assumed structure: index=region, columns=['Minor', 'Serious', 'Fatal'].
-            If df_values is not None, numbers are used for annotaion.
+            If df_values is not None, numbers are used for annotation.
             If df_values is None, no annotaion is used. Default is None.
         - figsize: tupple, optional, output figure size in inches.
         - file_out: str or None, optional
@@ -257,12 +256,14 @@ def plt_bar_dist_by_region(df, df_values=None, figsize=(10, 6), file_out=None):
                          va='center', **dict_par)
     
     # labels and legend
-    ax1.set_title('% of total crashes', pad=25)
-    ax1.set_xlabel('% of total crashes')
+    # ax1.set_title('% of total', pad=25)
+    ax1.set_xlabel('% of total')
+    ax1.set_ylabel(None)
     ax1.legend(bbox_to_anchor=(0, 0.97), loc='lower left', ncol=3)
     
-    ax2.set_title('% of open road crashes')
-    ax2.set_xlabel('% of open road crashes')
+    # ax2.set_title('% of total')
+    ax2.set_xlabel('% open road')
+    ax2.legend(bbox_to_anchor=(0.3, 0.97), loc='lower left')
 
     plt.tight_layout(pad=0.2)
     plot_output(file_out=file_out)
@@ -337,12 +338,12 @@ def get_regions_island():
             'Otago', 'Southland']
     return {r: 'n' if r in l_ni else 's' for r in l_ni+l_si}
 
-def get_coordinates_from_geojson(file='./data/cas_wellington_2019.geojson'):
+def get_coordinates_from_geojson(file='cas_wellington_2019.geojson'):
     """
     Reads a geojson file and extracts latitude and longitude values.
     Returns DF with OBJECTID as index and lat, lon as columns.
     """
-    with open('./data/cas_wellington_2019.geojson') as f:
+    with open(dir_data+file) as f:
         gj = geojson.load(f)
     df_gj = pd.DataFrame(
         [[x['properties']['OBJECTID'], 
